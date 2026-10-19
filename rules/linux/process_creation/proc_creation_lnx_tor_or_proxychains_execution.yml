@@ -1,0 +1,48 @@
+title: Tor, Torsocks or Proxychains Execution on Linux
+id: 6a79d95e-9bab-4252-b0d3-edbe72296ccb
+status: experimental
+description: |
+  Detects execution of the Tor daemon, torsocks, proxychains, or any command routed through the local
+  Tor SOCKS proxy on Linux hosts. Servers rarely need Tor; its presence on a production host is a strong
+  signal of anonymised exfiltration, hidden-service hosting, or an operator covering their tracks.
+references:
+  - https://attack.mitre.org/techniques/T1090/003/
+  - https://github.com/haad/proxychains
+  - https://gitlab.torproject.org/tpo/core/torsocks
+author: Aman Sonkamble
+date: 2026-10-19
+tags:
+  - attack.command-and-control
+  - attack.t1090.003
+logsource:
+  category: process_creation
+  product: linux
+detection:
+  selection_image:
+    Image|endswith:
+      - '/tor'
+      - '/torsocks'
+      - '/proxychains'
+      - '/proxychains4'
+      - '/obfs4proxy'
+      - '/snowflake-client'
+  selection_cmdline:
+    CommandLine|contains:
+      - '127.0.0.1:9050'
+      - '127.0.0.1:9150'
+      - 'localhost:9050'
+      - 'socks5h://'
+      - 'torsocks '
+      - 'proxychains '
+  filter_apt:
+    Image|endswith:
+      - '/apt'
+      - '/apt-get'
+      - '/dpkg'
+      - '/yum'
+      - '/dnf'
+  condition: 1 of selection_* and not filter_apt
+falsepositives:
+  - Approved research hosts
+  - Package managers installing or removing the tor package
+level: medium

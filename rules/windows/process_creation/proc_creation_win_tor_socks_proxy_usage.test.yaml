@@ -1,0 +1,30 @@
+positive:
+  - name: curl through Tor SOCKS
+    event:
+      Image: C:\Windows\System32\curl.exe
+      CommandLine: curl.exe --socks5-hostname 127.0.0.1:9050 http://abcdefghij.onion/
+  - name: Chromium with Tor proxy flag
+    event:
+      Image: C:\Program Files\Google\Chrome\Application\chrome.exe
+      CommandLine: chrome.exe --proxy-server=socks5://localhost:9150
+  - name: Tor binary itself
+    event:
+      Image: C:\Users\ops\Desktop\Tor Browser\Browser\TorBrowser\Tor\tor.exe
+      CommandLine: tor.exe -f torrc
+  - name: PowerShell with socks5h scheme
+    event:
+      Image: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+      CommandLine: powershell -c "Invoke-WebRequest -Proxy socks5h://127.0.0.1:9050 http://x.onion"
+negative:
+  - name: Ordinary curl
+    event:
+      Image: C:\Windows\System32\curl.exe
+      CommandLine: curl.exe https://api.northwind.example/health
+  - name: Local web server on another port
+    event:
+      Image: C:\Program Files\nodejs\node.exe
+      CommandLine: node server.js --listen 127.0.0.1:9000
+  - name: Binary named similarly
+    event:
+      Image: C:\Tools\editor.exe
+      CommandLine: editor.exe

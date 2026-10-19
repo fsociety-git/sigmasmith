@@ -1,0 +1,38 @@
+positive:
+  - name: sc stop winlogbeat
+    event:
+      Image: C:\Windows\System32\sc.exe
+      CommandLine: sc.exe stop winlogbeat
+  - name: sc disable Sysmon at boot
+    event:
+      Image: C:\Windows\System32\sc.exe
+      CommandLine: sc config Sysmon64 start= disabled
+  - name: net stop SplunkForwarder
+    event:
+      Image: C:\Windows\System32\net1.exe
+      CommandLine: net1 stop SplunkForwarder
+  - name: PowerShell Stop-Service on NXLog
+    event:
+      Image: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+      CommandLine: powershell -c "Stop-Service -Name nxlog -Force"
+  - name: taskkill on the Graylog sidecar
+    event:
+      Image: C:\Windows\System32\taskkill.exe
+      CommandLine: taskkill /F /IM graylog-sidecar.exe
+negative:
+  - name: sc start winlogbeat
+    event:
+      Image: C:\Windows\System32\sc.exe
+      CommandLine: sc.exe start winlogbeat
+  - name: Stopping an unrelated service
+    event:
+      Image: C:\Windows\System32\net.exe
+      CommandLine: net stop Spooler
+  - name: Get-Service is read-only
+    event:
+      Image: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+      CommandLine: powershell -c "Get-Service winlogbeat"
+  - name: sc query is read-only
+    event:
+      Image: C:\Windows\System32\sc.exe
+      CommandLine: sc query Sysmon64

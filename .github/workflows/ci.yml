@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  rules:
+    name: Validate, test and compile rules (Python ${{ matrix.python }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Install
+        run: python -m pip install --upgrade pip && pip install -e ".[compile,dev]"
+      - name: Lint
+        run: ruff check sigmasmith tests && ruff format --check sigmasmith tests
+      - name: Type check
+        run: mypy sigmasmith
+      - name: Validate rules against SigmaHQ conventions
+        run: sigmasmith validate --strict
+      - name: Validate rules with pySigma and sigma-cli
+        run: pip install sigma-cli && sigma check rules
+      - name: Test rules against sample events
+        run: sigmasmith test
+      - name: Unit tests
+        run: pytest
+      - name: Compile to every SIEM backend
+        run: sigmasmith build --out dist
+      - name: Coverage matrix
+        run: sigmasmith coverage --out dist/COVERAGE.md
+      - uses: actions/upload-artifact@v4
+        if: matrix.python == '3.12'
+        with:
+          name: compiled-queries
+          path: dist/

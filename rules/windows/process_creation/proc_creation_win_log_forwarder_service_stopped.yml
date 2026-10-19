@@ -1,0 +1,62 @@
+title: Log Forwarder Service Stopped or Disabled on Windows
+id: e9cebe49-6ad3-494a-a57c-8542292bdd64
+status: experimental
+description: |
+  Detects sc.exe, net.exe, PowerShell or taskkill being used to stop, disable or kill the agents that forward
+  Windows events to the SIEM (Winlogbeat, NXLog, Splunk Universal Forwarder, Graylog Sidecar, Wazuh, Elastic
+  Agent, Sysmon). A stopped forwarder looks identical to a healthy quiet host from the SIEM side; this rule
+  fires at the moment of tampering rather than hours later when the feed is noticed missing.
+references:
+  - https://attack.mitre.org/techniques/T1685/
+  - https://attack.mitre.org/techniques/T1685/001/
+author: Aman Sonkamble
+date: 2026-10-19
+tags:
+  - attack.defense-impairment
+  - attack.t1685
+  - attack.t1685.001
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_sc:
+    Image|endswith: '\sc.exe'
+    CommandLine|contains:
+      - ' stop '
+      - ' delete '
+      - 'start= disabled'
+      - 'start=disabled'
+  selection_net:
+    Image|endswith:
+      - '\net.exe'
+      - '\net1.exe'
+    CommandLine|contains: ' stop '
+  selection_ps:
+    Image|endswith:
+      - '\powershell.exe'
+      - '\pwsh.exe'
+    CommandLine|contains:
+      - 'Stop-Service'
+      - 'Set-Service'
+      - 'Remove-Service'
+  selection_taskkill:
+    Image|endswith: '\taskkill.exe'
+    CommandLine|contains: ' /im '
+  service_name:
+    CommandLine|contains:
+      - 'winlogbeat'
+      - 'nxlog'
+      - 'SplunkForwarder'
+      - 'splunkd'
+      - 'graylog-sidecar'
+      - 'graylog_sidecar'
+      - 'WazuhSvc'
+      - 'wazuh-agent'
+      - 'Elastic Agent'
+      - 'elastic-agent'
+      - 'Sysmon'
+      - 'filebeat'
+  condition: 1 of selection_* and service_name
+falsepositives:
+  - Agent upgrades by software deployment tools
+level: high

@@ -1,0 +1,23 @@
+positive:
+  - name: Gateway host
+    event:
+      cs-host: marketplacexyz.onion.ws
+      c-uri: https://marketplacexyz.onion.ws/login
+      cs-method: GET
+  - name: Onion label in URI path on a reverse proxy
+    event:
+      cs-host: gateway.example
+      c-uri: http://gateway.example/abcdef.onion/panel
+  - name: tor2web host
+    event:
+      cs-host: abc.tor2web.io
+      c-uri: https://abc.tor2web.io/
+negative:
+  - name: Normal site
+    event:
+      cs-host: docs.northwind.example
+      c-uri: https://docs.northwind.example/refunds
+  - name: Word 'onion' in a path without a label
+    event:
+      cs-host: recipes.example
+      c-uri: https://recipes.example/french-onion-soup

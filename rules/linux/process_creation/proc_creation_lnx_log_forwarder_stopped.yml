@@ -1,0 +1,52 @@
+title: Log Forwarder or Audit Service Stopped on Linux
+id: 44515922-8920-459b-af53-ab5238141e5c
+status: experimental
+description: |
+  Detects systemctl or service commands that stop, disable or mask the agents that ship logs to the SIEM
+  (rsyslog, syslog-ng, auditd, filebeat, graylog-sidecar, nxlog, fluent-bit, fluentd, vector, wazuh-agent,
+  splunkforwarder). This is the event that precedes a "silent log source": catch the cause here instead of
+  discovering a dead feed days later during an investigation.
+references:
+  - https://attack.mitre.org/techniques/T1685/
+  - https://attack.mitre.org/techniques/T1685/004/
+author: Aman Sonkamble
+date: 2026-10-19
+tags:
+  - attack.defense-impairment
+  - attack.t1685
+  - attack.t1685.004
+logsource:
+  category: process_creation
+  product: linux
+detection:
+  selection_tool:
+    Image|endswith:
+      - '/systemctl'
+      - '/service'
+  selection_action:
+    CommandLine|contains:
+      - ' stop'
+      - ' disable'
+      - ' mask'
+      - ' kill'
+  selection_service:
+    CommandLine|contains:
+      - 'rsyslog'
+      - 'syslog-ng'
+      - 'auditd'
+      - 'filebeat'
+      - 'graylog-sidecar'
+      - 'nxlog'
+      - 'fluent-bit'
+      - 'fluentd'
+      - 'vector'
+      - 'wazuh-agent'
+      - 'splunkforwarder'
+      - 'splunk'
+      - 'osqueryd'
+      - 'journald'
+  condition: all of selection_*
+falsepositives:
+  - Agent upgrades performed by configuration management (correlate with a start within minutes)
+  - Decommissioning
+level: high

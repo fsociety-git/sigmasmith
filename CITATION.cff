@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+title: "SigmaSmith: detection-as-code for Sigma rules"
+type: software
+authors:
+  - family-names: Sonkamble
+    given-names: Aman
+license: MIT
+repository-code: "https://github.com/fsociety-git/sigmasmith"
+version: 0.1.0
+date-released: "2026-10-19"

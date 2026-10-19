@@ -1,0 +1,41 @@
+title: SSH Daemon Configuration Weakened From Command Line
+id: 233c03b4-55f1-4a79-81ac-9569a1df3aa6
+status: experimental
+description: |
+  Detects command lines that enable root login or password authentication in sshd_config, whether by editing
+  the file in place with sed, appending with echo or tee, or writing a drop-in under sshd_config.d. Attackers
+  weaken SSH to keep a simple password backdoor after gaining a foothold; operators sometimes do it to "fix"
+  a lockout and forget. Either way it deserves an alert.
+references:
+  - https://attack.mitre.org/techniques/T1685/
+  - https://attack.mitre.org/techniques/T1098/004/
+  - https://man.openbsd.org/sshd_config
+author: Aman Sonkamble
+date: 2026-10-19
+tags:
+  - attack.defense-impairment
+  - attack.persistence
+  - attack.t1685
+  - attack.t1098.004
+logsource:
+  category: process_creation
+  product: linux
+detection:
+  selection_file:
+    CommandLine|contains:
+      - '/etc/ssh/sshd_config'
+      - 'sshd_config.d/'
+  selection_directive:
+    CommandLine|contains:
+      - 'PermitRootLogin yes'
+      - 'PermitRootLogin=yes'
+      - 'PasswordAuthentication yes'
+      - 'PasswordAuthentication=yes'
+      - 'PermitEmptyPasswords yes'
+      - 'ChallengeResponseAuthentication yes'
+      - 'KbdInteractiveAuthentication yes'
+  condition: all of selection_*
+falsepositives:
+  - Configuration management applying an intentionally permissive policy (rare on internet-facing hosts)
+  - Hardening scripts whose sed pattern quotes the permissive value they are replacing
+level: high

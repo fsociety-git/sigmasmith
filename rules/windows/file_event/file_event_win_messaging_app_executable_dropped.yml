@@ -1,0 +1,60 @@
+title: Executable or Script File Written by a Desktop Messaging App
+id: 2e0f8d55-c80b-4a85-91b7-bfaaf1aeb0d7
+status: experimental
+description: |
+  Detects WhatsApp, Telegram, Signal or Discord desktop clients writing an executable, script, shortcut or disk
+  image to disk. Messaging apps are a common delivery channel for malware sent from hijacked contacts; the file
+  write happens when the user downloads the attachment, before anything is executed. Pair with the WhatsApp child
+  process rule to see the full chain.
+references:
+  - https://attack.mitre.org/techniques/T1566/003/
+  - https://attack.mitre.org/techniques/T1204/002/
+author: Aman Sonkamble
+date: 2026-10-19
+tags:
+  - attack.initial-access
+  - attack.t1566.003
+  - attack.t1204.002
+logsource:
+  category: file_event
+  product: windows
+detection:
+  selection_app:
+    Image|endswith:
+      - '\WhatsApp.exe'
+      - '\WhatsAppDesktop.exe'
+      - '\Telegram.exe'
+      - '\Signal.exe'
+      - '\Discord.exe'
+      - '\Update.exe'
+  selection_ext:
+    TargetFilename|endswith:
+      - '.exe'
+      - '.scr'
+      - '.pif'
+      - '.com'
+      - '.js'
+      - '.jse'
+      - '.vbs'
+      - '.vbe'
+      - '.wsf'
+      - '.hta'
+      - '.lnk'
+      - '.bat'
+      - '.cmd'
+      - '.ps1'
+      - '.msi'
+      - '.iso'
+      - '.img'
+      - '.vhd'
+  filter_app_update:
+    TargetFilename|contains:
+      - '\AppData\Local\WhatsApp\app-'
+      - '\AppData\Roaming\Telegram Desktop\tupdates\'
+      - '\AppData\Local\Discord\app-'
+      - '\AppData\Local\Programs\signal-desktop\'
+  condition: selection_app and selection_ext and not filter_app_update
+falsepositives:
+  - Users legitimately exchanging installers over chat
+  - Client self-update directories not covered by the filter
+level: medium

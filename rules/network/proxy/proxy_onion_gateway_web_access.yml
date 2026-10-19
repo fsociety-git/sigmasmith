@@ -1,0 +1,37 @@
+title: Web Proxy Access to Tor Onion Gateway
+id: 8a46233b-186a-404a-8519-92e3b2e0342a
+status: experimental
+description: |
+  Detects HTTP requests through the corporate web proxy to Tor2web-style gateways or hosts carrying a .onion
+  label. These gateways are used to reach hidden-service marketplaces and malware infrastructure from
+  machines that cannot run Tor. Any hit from a server subnet deserves immediate triage.
+references:
+  - https://attack.mitre.org/techniques/T1090/003/
+  - https://attack.mitre.org/techniques/T1071/001/
+author: Aman Sonkamble
+date: 2026-10-19
+tags:
+  - attack.command-and-control
+  - attack.t1090.003
+  - attack.t1071.001
+logsource:
+  category: proxy
+detection:
+  selection_host:
+    cs-host|endswith:
+      - '.onion.to'
+      - '.onion.ws'
+      - '.onion.pet'
+      - '.onion.ly'
+      - '.onion.cab'
+      - '.onion.dog'
+      - '.onion.sh'
+      - '.onion.link'
+      - '.tor2web.io'
+      - '.tor2web.org'
+  selection_uri:
+    c-uri|contains: '.onion/'
+  condition: 1 of selection_*
+falsepositives:
+  - Threat intelligence collection from an approved egress
+level: medium

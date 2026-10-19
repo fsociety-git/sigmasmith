@@ -1,0 +1,31 @@
+positive:
+  - name: Tor daemon started manually
+    event:
+      Image: /usr/bin/tor
+      CommandLine: tor -f /tmp/torrc
+      User: www-data
+  - name: proxychains wrapping nmap
+    event:
+      Image: /usr/bin/proxychains4
+      CommandLine: proxychains4 nmap -sT 10.0.0.0/24
+  - name: curl via torsocks in command line
+    event:
+      Image: /usr/bin/bash
+      CommandLine: bash -c "torsocks curl http://abc.onion/"
+  - name: wget via local SOCKS
+    event:
+      Image: /usr/bin/wget
+      CommandLine: wget -e use_proxy=yes -e http_proxy=socks5h://127.0.0.1:9050 http://x.onion
+negative:
+  - name: apt installing tor is filtered
+    event:
+      Image: /usr/bin/apt-get
+      CommandLine: apt-get install tor
+  - name: Unrelated process
+    event:
+      Image: /usr/bin/python3
+      CommandLine: python3 collector.py --listen 127.0.0.1:8080
+  - name: Binary path containing 'tor' but not ending in it
+    event:
+      Image: /usr/bin/editor
+      CommandLine: editor notes.txt

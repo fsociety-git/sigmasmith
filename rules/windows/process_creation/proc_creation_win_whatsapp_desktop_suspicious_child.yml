@@ -1,0 +1,47 @@
+title: Suspicious Child Process of WhatsApp Desktop
+id: b41deebe-0437-446d-9dd9-0d3508be51f8
+status: experimental
+description: |
+  Detects script hosts, shells and living-off-the-land binaries spawned directly by the WhatsApp Desktop client.
+  WhatsApp is used to deliver malware lures from compromised business accounts; a victim opening an attachment
+  from the chat window causes the client to launch the payload's interpreter. The legitimate client has no reason
+  to start cmd, PowerShell, mshta, rundll32 or similar binaries.
+references:
+  - https://attack.mitre.org/techniques/T1204/002/
+  - https://attack.mitre.org/techniques/T1566/003/
+  - https://www.whatsapp.com/security
+author: Aman Sonkamble
+date: 2026-10-19
+tags:
+  - attack.execution
+  - attack.initial-access
+  - attack.t1204.002
+  - attack.t1566.003
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_parent:
+    ParentImage|endswith:
+      - '\WhatsApp.exe'
+      - '\WhatsAppDesktop.exe'
+      - '\WhatsApp Desktop.exe'
+  selection_child:
+    Image|endswith:
+      - '\cmd.exe'
+      - '\powershell.exe'
+      - '\pwsh.exe'
+      - '\wscript.exe'
+      - '\cscript.exe'
+      - '\mshta.exe'
+      - '\rundll32.exe'
+      - '\regsvr32.exe'
+      - '\certutil.exe'
+      - '\bitsadmin.exe'
+      - '\msiexec.exe'
+      - '\curl.exe'
+      - '\schtasks.exe'
+  condition: selection_parent and selection_child
+falsepositives:
+  - Enterprise software deployment that wraps WhatsApp (unlikely)
+level: high

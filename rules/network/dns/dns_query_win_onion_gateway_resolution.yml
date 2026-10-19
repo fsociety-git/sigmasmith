@@ -1,0 +1,40 @@
+title: DNS Query for Tor Onion Gateway Domain
+id: 8ca74605-bec8-405c-b563-c3664462f204
+status: experimental
+description: |
+  Detects DNS resolution attempts for Tor2web-style gateways that expose hidden services on the clearnet
+  (onion.to, onion.ws, onion.pet, onion.ly, tor2web.io and friends) and for raw .onion names, which should
+  never reach a corporate resolver. Gateways let malware reach hidden-service C2 without shipping a Tor client.
+references:
+  - https://attack.mitre.org/techniques/T1090/003/
+  - https://attack.mitre.org/techniques/T1071/001/
+  - https://www.torproject.org/
+author: Aman Sonkamble
+date: 2026-10-19
+tags:
+  - attack.command-and-control
+  - attack.t1090.003
+  - attack.t1071.001
+logsource:
+  category: dns_query
+  product: windows
+detection:
+  selection:
+    QueryName|endswith:
+      - '.onion'
+      - '.onion.to'
+      - '.onion.ws'
+      - '.onion.pet'
+      - '.onion.ly'
+      - '.onion.cab'
+      - '.onion.dog'
+      - '.onion.sh'
+      - '.onion.link'
+      - '.onion.top'
+      - '.tor2web.io'
+      - '.tor2web.org'
+      - '.darknet.to'
+  condition: selection
+falsepositives:
+  - Threat intelligence tooling that deliberately resolves gateway domains
+level: medium

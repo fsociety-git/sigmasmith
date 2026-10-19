@@ -1,0 +1,22 @@
+positive:
+  - name: Tor2web gateway lookup
+    event:
+      QueryName: duskgytldkxiuqc6.onion.to
+      Image: C:\Users\ops\AppData\Local\Temp\update.exe
+  - name: Raw onion name leaked to resolver
+    event:
+      QueryName: abcdefghijklmnop.onion
+      Image: C:\Windows\System32\svchost.exe
+  - name: Uppercase gateway
+    event:
+      QueryName: EXAMPLE.ONION.WS
+negative:
+  - name: Ordinary domain
+    event:
+      QueryName: api.northwind.example
+  - name: Domain containing onion as a word
+    event:
+      QueryName: onionrings.example
+  - name: Subdomain that only starts with onion
+    event:
+      QueryName: onion.northwind.example

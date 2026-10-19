@@ -1,0 +1,31 @@
+positive:
+  - name: Stopping filebeat
+    event:
+      Image: /usr/bin/systemctl
+      CommandLine: systemctl stop filebeat
+      User: root
+  - name: Masking auditd
+    event:
+      Image: /usr/bin/systemctl
+      CommandLine: systemctl mask auditd.service
+  - name: service command stopping rsyslog
+    event:
+      Image: /usr/sbin/service
+      CommandLine: service rsyslog stop
+  - name: Disabling the graylog sidecar
+    event:
+      Image: /bin/systemctl
+      CommandLine: systemctl disable --now graylog-sidecar
+negative:
+  - name: Restart is not a stop
+    event:
+      Image: /usr/bin/systemctl
+      CommandLine: systemctl restart filebeat
+  - name: Status check
+    event:
+      Image: /usr/bin/systemctl
+      CommandLine: systemctl status auditd
+  - name: Stopping an unrelated service
+    event:
+      Image: /usr/bin/systemctl
+      CommandLine: systemctl stop nginx

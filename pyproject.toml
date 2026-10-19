@@ -1,0 +1,62 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "sigmasmith"
+version = "0.1.0"
+description = "Detection-as-code for Sigma rules: write, test against real events, compile to every SIEM, and gate in CI."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Aman Sonkamble", email = "aman.s.732002@gmail.com" }]
+keywords = ["sigma", "detection-engineering", "detection-as-code", "siem", "splunk", "elastic", "kusto", "security", "soc"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Information Technology",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Security",
+]
+dependencies = ["pyyaml>=6.0"]
+
+[project.optional-dependencies]
+compile = [
+  "pysigma>=1.0",
+  "pysigma-backend-splunk>=1.1",
+  "pysigma-backend-elasticsearch>=1.1",
+  "pysigma-backend-opensearch>=1.0",
+  "pysigma-backend-kusto>=0.4",
+]
+dev = ["pytest>=8.0", "ruff>=0.6", "mypy>=1.10", "types-PyYAML"]
+
+[project.scripts]
+sigmasmith = "sigmasmith.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/fsociety-git/sigmasmith"
+Repository = "https://github.com/fsociety-git/sigmasmith"
+Issues = "https://github.com/fsociety-git/sigmasmith/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["sigmasmith"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM", "RUF"]
+ignore = ["RUF012", "E501"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q --strict-markers"
+
+[tool.mypy]
+python_version = "3.10"
+ignore_missing_imports = true

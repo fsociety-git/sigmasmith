@@ -1,0 +1,26 @@
+positive:
+  - name: sed enabling root login
+    event:
+      Image: /usr/bin/sed
+      CommandLine: sed -i 's/^PermitRootLogin no/PermitRootLogin yes/' /etc/ssh/sshd_config
+  - name: echo appending password auth
+    event:
+      Image: /usr/bin/bash
+      CommandLine: bash -c "echo 'PasswordAuthentication yes' >> /etc/ssh/sshd_config"
+  - name: Drop-in file via tee
+    event:
+      Image: /usr/bin/tee
+      CommandLine: tee /etc/ssh/sshd_config.d/99-backdoor.conf <<< 'PermitRootLogin=yes'
+negative:
+  - name: Hardening, not weakening
+    event:
+      Image: /usr/bin/sed
+      CommandLine: sed -i 's/^PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config
+  - name: Reading the config
+    event:
+      Image: /usr/bin/grep
+      CommandLine: grep -n PermitRootLogin /etc/ssh/sshd_config
+  - name: Directive without the file
+    event:
+      Image: /usr/bin/bash
+      CommandLine: bash -c "echo PasswordAuthentication yes"
